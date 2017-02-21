@@ -1,0 +1,36 @@
+.none {
+  display: none !important;
+}
+
+body {
+  background: #FFFFFF;
+  font-family: sans-serif;
+}
+
+p {
+  margin: 0 0 5px;
+}
+
+
+.menu{
+  border-spacing: 0px;
+  margin-bottom: 32px;  
+}
+
+.file td{
+  border-bottom: dashed 1px #AAA;
+}
+
+.file td:not(:first-child){
+  padding: 0px 16px;
+}
+.file td:nth-child(2){
+  padding-left: 4px;
+}
+.file td:last-child{
+  padding-right: 0px;
+}
+
+.file.selected td{
+  background-color: #DDD;  
+}
