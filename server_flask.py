@@ -26,5 +26,5 @@ def send_files_data():
     except:
         return send_from_directory('./', 'data.cache')
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(port=8080, threaded=True)

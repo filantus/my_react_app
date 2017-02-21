@@ -31,11 +31,9 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type', 'text/html')
                 self.end_headers()
 
-def run():
-  print('starting server...')
-  server_address = ('127.0.0.1', 8012)
-  httpd = HTTPServer(server_address, testHTTPServer_RequestHandler)
-  print('running server...')
-  httpd.serve_forever()
-
-run()
+if __name__ == '__main__':
+    print('starting server...')
+    server_address = ('127.0.0.1', 8080)
+    httpd = HTTPServer(server_address, testHTTPServer_RequestHandler)
+    print('running server...')
+    httpd.serve_forever()
