@@ -34,3 +34,7 @@ p {
 .file.selected td{
   background-color: #DDD;  
 }
+
+.file.superselected td{
+  background-color: red;
+}
