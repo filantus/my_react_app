@@ -7,42 +7,6 @@ const connect = ReactRedux.connect;
 const createStore = Redux.createStore;
 
 
-// Action
-const increaseAction = { type: 'increase' }
-
-// Reducer
-function counter(state = { count: 0 }, action) {
-  const count = state.count
-  switch (action.type) {
-    case 'increase':
-      return { count: count + 1 }
-    default:
-      return state
-  }
-}
-
-// Store
-const store = createStore(counter)
-
-// Map Redux state to component props
-function mapStateToProps(state){
-  return {
-    value: state.count
-  }
-}
-
-// Map Redux actions to component props
-function mapDispatchToProps(dispatch){
-  return {
-    onIncreaseClick: () => dispatch(increaseAction)
-  }
-}
-
-
-
-
-
-
 class File extends Component {
   constructor(props) {
     super(props);
@@ -51,11 +15,12 @@ class File extends Component {
     };
   }
   onClick(event, react_event){
-    this.props.onClick(this.props.name, !this.props.selected, event.ctrlKey);
+    // this.props.onClick(this.props.name, !this.props.selected, event.ctrlKey);
+    this.setState({'selected': !this.state.selected});
   }
   onDoubleClick(event, react_event){
-    console.log(111);
-    alert(DoubleClick);
+    console.log('DoubleClick');
+    // alert('DoubleClick');
   }
   render(){
     let classNames = `file${this.state.selected ? ' selected': ''}`;
@@ -84,7 +49,7 @@ class Menu extends Component {
       selections: [],
     };
 
-    axios.get('http://localhost/files')
+    axios.get('/files')
       .then(res => {
         console.log(res.data);
         this.setState({'files_data': res.data});
@@ -130,6 +95,41 @@ class Menu extends Component {
   }
 }
 
+
+
+
+
+
+// Action
+const increaseAction = { type: 'increase' }
+
+// Reducer
+function counter(state = { count: 0 }, action) {
+  const count = state.count
+  switch (action.type) {
+    case 'increase':
+      return { count: count + 1 }
+    default:
+      return state
+  }
+}
+
+// Store
+const store = createStore(counter)
+
+// Map Redux state to component props
+function mapStateToProps(state){
+  return {
+    value: state.count
+  }
+}
+
+// Map Redux actions to component props
+function mapDispatchToProps(dispatch){
+  return {
+    onIncreaseClick: () => dispatch(increaseAction)
+  }
+}
 
 class App extends Component {
   render(){
