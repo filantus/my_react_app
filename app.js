@@ -74,8 +74,8 @@ class Menu extends Component {
         size={item.size}
         is_dir={item.is_dir}
         created={item.created}
-        selected={this.state.selections[item.name]}
-        onClick={this.onChildClick.bind(this)}
+        // selected={this.state.selections[item.name]}
+        // onClick={this.onChildClick.bind(this)}
       />
     }.bind(this));
 
