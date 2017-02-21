@@ -62,7 +62,7 @@ class File extends Component {
   render(){
     let classNames = `file${this.state.selected ? ' selected': ''}`;
     return (
-        <tr className={classNames} onClick={this.onClick.bind(this)} onDoubleClick={() => alert('hi!')}>
+        <tr className={classNames} onClick={this.onClick.bind(this)} onDoubleClick={this.onDoubleClick.bind(this)}>
           <td>{this.props.is_dir ? <img src="/static/images/icons/folder.png" />: <img src="/static/images/icons/file.png" />}</td>
           <td>{this.props.name}</td>
           <td>{this.props.size}</td>
