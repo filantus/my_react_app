@@ -1,159 +1,125 @@
 ﻿// window.ee = new EventEmitter();
 
 const Component = React.Component;
-const PropTypes = React.PropTypes;
-const Provider = ReactRedux.Provider;
-const connect = ReactRedux.connect;
-const createStore = Redux.createStore;
-
 
 class File extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      selected: this.props.selected,
-    };
-  }
-  onClick(event, react_event){
-    // this.props.onClick(this.props.name, !this.props.selected, event.ctrlKey);
-    this.setState({'selected': !this.state.selected});
-  }
-  onDoubleClick(event, react_event){
-    console.log('DoubleClick');
-    // alert('DoubleClick');
-  }
-  render(){
-    let classNames = `file${this.state.selected ? ' selected': ''}`;
-    return (
-        <tr className={classNames} onClick={this.onClick.bind(this)} onDoubleClick={this.onDoubleClick.bind(this)}>
-          <td>{this.props.is_dir ? <img src="/static/images/icons/folder.png" />: <img src="/static/images/icons/file.png" />}</td>
-          <td>{this.props.name}</td>
-          <td>{this.props.size}</td>
-          <td>{this.props.created.replace(/-/g, '.')}</td>
-        </tr>
-    );
-  }
-}
-File.propTypes = {
-  name: React.PropTypes.string.isRequired,
-  size: React.PropTypes.number.isRequired,
-  is_dir: React.PropTypes.bool.isRequired,
-  created: React.PropTypes.string.isRequired,
-}
 
+    getClassName(){
+        let posfix = ' ';
+        if (this.props.isSuperSelected) {
+            posfix = ' superselected';
+        }
+        else if (this.props.isSelected) {
+            posfix = ' selected'
+        }
+        return `file ${posfix}`
+    }
+
+    render() {
+        console.log(this.props.isSuperSelected)
+        return (
+            <tr className={this.getClassName()}
+                onClick={(e) => this.props.onFileClick(e, this.props.name)}
+                onDoubleClick={(e)=> this.props.onFileDoubleClick(e, this.props.name)}
+            >
+                <td>{this.props.is_dir ? <img src="/static/images/icons/folder.png"/> :
+                    <img src="/static/images/icons/file.png"/>}</td>
+                <td>{this.props.name}</td>
+                <td>{this.props.size}</td>
+                <td>{this.props.created.replace(/-/g, '.')}</td>
+            </tr>
+        );
+    }
+}
 
 class Menu extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      selections: [],
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            selectedItems: [],
+            superSelectedItems: [],
+        };
 
-    axios.get('/files')
-      .then(res => {
-        console.log(res.data);
-        this.setState({'files_data': res.data});
-      });
-  }
-  onChildClick(id, selected, append){
-    var selections = append ? this.state.selections : [];
+        axios.get('/files')
+            .then(res => {
+                console.log(res.data);
+                this.setState({'files_data': res.data});
+            });
+    }
 
-    selections[id] = selected;
+    onFileDoubleClick(e, name) {
+        e.preventDefault();
+        if ((this.state.superSelectedItems.indexOf(name)) !=0) {
+            let nextState = this.state.superSelectedItems.slice();
+            nextState.push(name);
+            this.setState({superSelectedItems: nextState});
+        }
+        else {
+        // TODO remove from superSelectedItems slice
+        }
+    }
 
-    this.setState({
-        selections: selections
-    });
-  }
-  render(){
-    const files_data = this.state.files_data || [];
+    onChildClick(e, name) {
+        e.preventDefault();
+        if ((this.state.selectedItems.indexOf(name)) !=0) {
+            let nextState = this.state.selectedItems.slice();
+            nextState.push(name);
+            this.setState({selectedItems: nextState});
+        }
+        else {
+            // TODO remove from selectedItems slice
+        }
+    }
 
-    const files = files_data.sort(function(a, b) {return a.is_dir < b.is_dir}).map(function(item, index){
-      return <File
-        key={index+Math.random()}
-        name={item.name}
-        size={item.size}
-        is_dir={item.is_dir}
-        created={item.created}
-        // selected={this.state.selections[item.name]}
-        // onClick={this.onChildClick.bind(this)}
-      />
-    }.bind(this));
+    render() {
+        const files_data = this.state.files_data || [];
 
-    return (
-      <table className='menu'>
-        <thead>
-          <tr>
-            <th></th>
-            <th>Name</th>
-            <th>Size</th>
-            <th>Created</th>
-          </tr>
-        </thead>
-        <tbody>{files}</tbody>
-      </table>
-    );
-  }
-}
+        const files = files_data.sort(function (a, b) {
+            return a.is_dir < b.is_dir
+        }).map(function (item, index) {
+            return <File
+                key={item.name}
+                name={item.name}
+                size={item.size}
+                is_dir={item.is_dir}
+                created={item.created}
+                isSelected={true ? (this.state.selectedItems.indexOf(item.name) != -1) : false}
+                isSuperSelected={true ? (this.state.superSelectedItems.indexOf(item.name) != -1) : false}
+                onFileClick={(e, name)=>this.onChildClick(e, name)}
+                onFileDoubleClick={(e, name)=>this.onFileDoubleClick(e, name)}
+            />
+        }.bind(this));
 
-
-
-
-
-
-// Action
-const increaseAction = { type: 'increase' }
-
-// Reducer
-function counter(state = { count: 0 }, action) {
-  const count = state.count
-  switch (action.type) {
-    case 'increase':
-      return { count: count + 1 }
-    default:
-      return state
-  }
-}
-
-// Store
-const store = createStore(counter)
-
-// Map Redux state to component props
-function mapStateToProps(state){
-  return {
-    value: state.count
-  }
-}
-
-// Map Redux actions to component props
-function mapDispatchToProps(dispatch){
-  return {
-    onIncreaseClick: () => dispatch(increaseAction)
-  }
+        return (
+            <table className='menu'>
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Size</th>
+                    <th>Created</th>
+                </tr>
+                </thead>
+                <tbody>{files}</tbody>
+            </table>
+        );
+    }
 }
 
 class App extends Component {
-  render(){
-    const { value, onIncreaseClick } = this.props
-    return (
-      <div>
-        <Menu />
-        <span>{value}</span>
-        <button onClick={onIncreaseClick}>Increase</button>
-      </div>
-    )
-  }
+    render() {
+        const { value, onIncreaseClick } = this.props
+        return (
+            <div>
+                <Menu />
+                <span>{value}</span>
+                <button onClick={onIncreaseClick}>Increase</button>
+            </div>
+        )
+    }
 }
-
-App.propTypes = {
-  value: PropTypes.number.isRequired,
-  onIncreaseClick: PropTypes.func.isRequired
-}
-
-const ConnectedApp = connect(mapStateToProps, mapDispatchToProps)(App)
 
 ReactDOM.render(
-  <Provider store={store}>
-    <ConnectedApp />
-  </Provider>,
-  document.getElementById('root')
+    <App/>,
+    document.getElementById('root')
 )
