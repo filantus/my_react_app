@@ -1,7 +1,6 @@
 ﻿import os
 import json
 import hashlib
-import humanize
 import datetime
 
 def md5_for_file(path, block_size=256*128):
@@ -44,7 +43,6 @@ def process_files(directory, func):
         path = directory+'/'+f
 
         if not os.path.isdir(path):
-            # get_file_stat(path)
             func(path)
         else:
             process_files(path, func)

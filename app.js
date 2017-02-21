@@ -51,11 +51,9 @@ class File extends Component {
     };
   }
   onClick(event, react_event){
-    event.preventDefault();
     this.props.onClick(this.props.name, !this.props.selected, event.ctrlKey);
   }
   onDoubleClick(event, react_event){
-    event.preventDefault();
     console.log(111);
     alert(DoubleClick);
   }
